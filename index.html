@@ -1,74 +1,67 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P File Share</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
-        h1 { font-size: 28px; color: #333; }
-        .code { font-size: 40px; letter-spacing: 10px; font-weight: bold; margin: 10px 0; }
-        canvas { margin: 15px auto; display: block; }
-        button { background: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #0056b3; }
-        input { padding: 8px; font-size: 16px; width: 80%; margin-top: 10px; }
-        .small-text { font-size: 13px; color: #777; margin-top: 10px; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickShare — Connect & Send (5 MB)</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Socket.IO client -->
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <!-- QR gen + scan -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Connect Device</h1>
-        <div class="code" id="code">----</div>
-        <canvas id="qrcode"></canvas>
-        <button onclick="scanQR()">📷 Scan QR to Connect</button><br>
-        <input type="text" id="manualCode" placeholder="Enter 4-digit code">
-        <button onclick="joinByCode()">Join</button>
-        <p class="small-text">Share code or scan QR to connect and transfer files (Max 5 MB)</p>
-    </div>
+  <div class="container">
+    <header>
+      <h1>QuickShare</h1>
+      <p class="sub">4‑digit OTP • QR connect • P2P WebRTC with 5 MB fallback</p>
+    </header>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script>
-        const code = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById("code").innerText = code;
-        
-        const qr = new QRious({
-            element: document.getElementById('qrcode'),
-            value: window.location.origin + "/?code=" + code,
-            size: 200
-        });
+    <section class="card" id="connectCard">
+      <div class="grid2">
+        <div>
+          <h3>Your Code</h3>
+          <div class="code" id="otp">— — — —</div>
+          <canvas id="qr"></canvas>
+          <p class="hint">Share this code or QR with the other device.</p>
+        </div>
+        <div>
+          <h3>Join a Partner</h3>
+          <div class="joinRow">
+            <input id="codeInput" maxlength="4" placeholder="Enter 4-digit code" />
+            <button id="btnJoin">Join</button>
+          </div>
+          <div class="scanWrap">
+            <button id="btnScan">📷 Scan QR</button>
+            <div id="reader" class="hidden"></div>
+            <button id="stopScan" class="hidden">Stop Scan</button>
+          </div>
+          <p id="status"></p>
+        </div>
+      </div>
+    </section>
 
-        function scanQR(){
-            const qrRegion = document.createElement('div');
-            qrRegion.style.width = "300px";
-            qrRegion.style.margin = "auto";
-            document.body.innerHTML = "";
-            document.body.appendChild(qrRegion);
-            
-            const html5QrCode = new Html5Qrcode(qrRegion);
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
-                qrCodeMessage => {
-                    html5QrCode.stop();
-                    alert("Scanned Code: " + qrCodeMessage);
-                    // Connect to peer here
-                },
-                errorMessage => {}
-            );
-        }
+    <section class="card hidden" id="transferCard">
+      <h3>Transfer</h3>
+      <div class="grid2">
+        <div>
+          <input type="file" id="fileInput" />
+          <button id="sendBtn" disabled>Send</button>
+          <progress id="sendProg" value="0" max="100"></progress>
+        </div>
+        <div>
+          <a id="downloadLink" class="download hidden">Download received file</a>
+          <progress id="recvProg" value="0" max="100"></progress>
+        </div>
+      </div>
+      <p class="muted">Connected via WebRTC DataChannel. If blocked, a 5 MB upload fallback will be used through the backend.</p>
+    </section>
 
-        function joinByCode(){
-            const entered = document.getElementById("manualCode").value;
-            if(entered.length === 4){
-                alert("Joining session with code: " + entered);
-                // Connect to peer here
-            } else {
-                alert("Please enter a valid 4-digit code");
-            }
-        }
-    </script>
+    <footer><small>Demo build. Don’t use for sensitive data.</small></footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script>window.BACKEND_URL = "https://file-share-backend-tsev.onrender.com";</script>
 </body>
 </html>
