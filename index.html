@@ -10,6 +10,46 @@
   <!-- QR gen + scan -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- Inline CSS for badge + green button -->
+  <style>
+    /* powered badge */
+    .powered-badge {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      pointer-events: none;
+      opacity: 0.95;
+    }
+    @media (max-width: 420px) {
+      .powered-badge { font-size: 11px; padding: 5px 8px; right: 8px; bottom: 8px; }
+    }
+
+    /* green download button */
+    .download-btn {
+      display: inline-block;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .download-btn:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -51,7 +91,8 @@
           <progress id="sendProg" value="0" max="100"></progress>
         </div>
         <div>
-          <a id="downloadLink" class="download hidden">Download received file</a>
+          <p><strong>Download received file</strong></p>
+          <a id="downloadLink" class="download-btn hidden">Download</a>
           <progress id="recvProg" value="0" max="100"></progress>
         </div>
       </div>
@@ -60,6 +101,9 @@
 
     <footer><small></small></footer>
   </div>
+
+  <!-- powered badge -->
+  <div class="powered-badge">powered by BAPON BARMON</div>
 
   <script type="module" src="app.js"></script>
   <script>window.BACKEND_URL = "https://file-share-backend-tsev.onrender.com";</script>
