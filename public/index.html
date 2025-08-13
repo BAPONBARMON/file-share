@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickShare — 4-digit/QR P2P</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- QR scanning (html5-qrcode) -->
+  <script src="https://unpkg.com/html5-qrcode" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>QuickShare <small>4-digit / QR</small></h1>
+    <p class="sub">Peer‑to‑Peer (WebRTC) with 5 MB fallback via server</p>
+
+    <div class="card">
+      <div class="row">
+        <button id="btnCreate">Create Session (Sender)</button>
+        <div class="separator">or</div>
+        <div class="join">
+          <input id="codeInput" maxlength="4" placeholder="Enter 4‑digit code" />
+          <button id="btnJoin">Join (Receiver)</button>
+          <button id="btnScan">Scan QR</button>
+        </div>
+      </div>
+      <p id="status"></p>
+    </div>
+
+    <div id="qrArea" class="card hidden">
+      <h3>Share this QR or 4‑digit code</h3>
+      <div class="qrWrap">
+        <img id="qrImg" alt="QR" />
+        <div class="code" id="displayCode">— — — —</div>
+      </div>
+      <p class="hint">Receiver can scan QR or type the code.</p>
+    </div>
+
+    <div id="scanArea" class="card hidden">
+      <h3>Scan QR</h3>
+      <div id="reader"></div>
+      <button id="stopScan">Stop</button>
+    </div>
+
+    <div id="transfer" class="card hidden">
+      <h3>Transfer</h3>
+      <div class="grid">
+        <div>
+          <input type="file" id="fileInput" />
+          <button id="sendBtn" disabled>Send</button>
+          <progress id="sendProg" value="0" max="100"></progress>
+        </div>
+        <div>
+          <a id="downloadLink" class="download hidden">Download received file</a>
+          <progress id="recvProg" value="0" max="100"></progress>
+        </div>
+      </div>
+      <p class="muted">Tip: P2P uses WebRTC DataChannel; if blocked, upload/download fallback (<=5 MB) is used.</p>
+    </div>
+
+    <footer>
+      <small>Demo build. Don’t use for sensitive data. Session auto‑expires in ~15 min.</small>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
