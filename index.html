@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P File Share</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 90%; max-width: 400px; text-align: center; }
+        h1 { font-size: 28px; color: #333; }
+        .code { font-size: 40px; letter-spacing: 10px; font-weight: bold; margin: 10px 0; }
+        canvas { margin: 15px auto; display: block; }
+        button { background: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #0056b3; }
+        input { padding: 8px; font-size: 16px; width: 80%; margin-top: 10px; }
+        .small-text { font-size: 13px; color: #777; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Connect Device</h1>
+        <div class="code" id="code">----</div>
+        <canvas id="qrcode"></canvas>
+        <button onclick="scanQR()">📷 Scan QR to Connect</button><br>
+        <input type="text" id="manualCode" placeholder="Enter 4-digit code">
+        <button onclick="joinByCode()">Join</button>
+        <p class="small-text">Share code or scan QR to connect and transfer files (Max 5 MB)</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        const code = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById("code").innerText = code;
+        
+        const qr = new QRious({
+            element: document.getElementById('qrcode'),
+            value: window.location.origin + "/?code=" + code,
+            size: 200
+        });
+
+        function scanQR(){
+            const qrRegion = document.createElement('div');
+            qrRegion.style.width = "300px";
+            qrRegion.style.margin = "auto";
+            document.body.innerHTML = "";
+            document.body.appendChild(qrRegion);
+            
+            const html5QrCode = new Html5Qrcode(qrRegion);
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                qrCodeMessage => {
+                    html5QrCode.stop();
+                    alert("Scanned Code: " + qrCodeMessage);
+                    // Connect to peer here
+                },
+                errorMessage => {}
+            );
+        }
+
+        function joinByCode(){
+            const entered = document.getElementById("manualCode").value;
+            if(entered.length === 4){
+                alert("Joining session with code: " + entered);
+                // Connect to peer here
+            } else {
+                alert("Please enter a valid 4-digit code");
+            }
+        }
+    </script>
+</body>
+</html>
